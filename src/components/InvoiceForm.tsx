@@ -72,8 +72,19 @@ function InvoiceForm() {
   };
 
   const handleRowDel = (item) => {
-    var index = items.indexOf(item);
-    setItems((items) => [...items.splice(index, 1)]);
+    if (items.length > 1) {
+      setItems((items) => items.filter((data) => data.id !== item.id));
+    } else {
+      setItems([
+        {
+          id: "0",
+          name: "",
+          description: "",
+          price: 1.0,
+          quantity: 1,
+        },
+      ]);
+    }
   };
 
   return (
