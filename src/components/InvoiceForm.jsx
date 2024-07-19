@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Card, Col, Form, Row, Button } from "react-bootstrap";
+import { Card, Col, Form, Row, Button, InputGroup } from "react-bootstrap";
 import InvoiceItem from "./reusable/InvoiceItem";
+import InvoiceModal from "./reusable/InvoiceModal";
 
 function InvoiceForm() {
   const [state, setState] = useState({
@@ -92,7 +93,12 @@ function InvoiceForm() {
   };
 
   return (
-    <Form>
+    <Form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setState((state) => ({ ...state, isOpen: true }));
+      }}
+    >
       <Row>
         <Col md={8} lg={9}>
           <Card className="d-flex p-4 p-xl-5 my-3 my-xl-4">
@@ -196,9 +202,15 @@ function InvoiceForm() {
         </Col>
         <Col md={4} lg={3}>
           <div className="sticky-top pt-md-3 pt-xl-4">
-            <Button variant="primary" type="submit" className="d-block w-100">
+            <Button
+              variant="primary"
+              type="submit"
+              className="d-block w-100 mb-3"
+              onClick={() => setState((state) => ({ ...state, isOpen: true }))}
+            >
               Review Invoice
             </Button>
+
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">Currency:</Form.Label>
               <Form.Select
@@ -209,9 +221,56 @@ function InvoiceForm() {
                 <option value="$">USD</option>
               </Form.Select>
             </Form.Group>
+
+            <Form.Group className="my-3">
+              <Form.Label className="fw-bold">Tax Rate:</Form.Label>
+              <InputGroup className="my-1 flex-nowrap">
+                <Form.Control
+                  name="taxRate"
+                  type="number"
+                  value={state.taxRate}
+                  onChange={onChange}
+                  className="bg-white-border"
+                  placeholder="0.00"
+                  min="0.00"
+                  step="0.01"
+                  max="100.0"
+                />
+                <InputGroup.Text className="bg-light fw-bold tex-secondary small">
+                  %
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+
+            <Form.Group className="my-3">
+              <Form.Label className="fw-bold">Discount Rate:</Form.Label>
+              <InputGroup className="my-1 flex-nowrap">
+                <Form.Control
+                  name="discountRate"
+                  type="number"
+                  value={state.discountRate}
+                  onChange={onChange}
+                  className="bg-white-border"
+                  placeholder="0.00"
+                  min="0.00"
+                  step="0.01"
+                  max="100.0"
+                />
+                <InputGroup.Text className="bg-light fw-bold tex-secondary small">
+                  %
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
           </div>
         </Col>
       </Row>
+      <InvoiceModal
+        showModal={state.isOpen}
+        closeModal={() => setState((state) => ({ ...state, isOpen: false }))}
+        info={state}
+        items={items}
+        total={total}
+      />
     </Form>
   );
 }

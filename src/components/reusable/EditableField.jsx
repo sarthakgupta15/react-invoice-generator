@@ -21,10 +21,10 @@ function EditableField(props) {
         placeholder={props.cellData.placeholder}
         min={props.cellData.min}
         max={props.cellData.max}
-        name={props.cellData.name} 
+        name={props.cellData.name}
         value={props.cellData.value}
         step={props.cellData.step}
-        id={props.cellData.id} 
+        id={props.cellData.id}
         onChange={props.onItemizedItemEdit}
         required
       />
