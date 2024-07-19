@@ -8,7 +8,7 @@ function InvoiceModal(props) {
         <div className="d-flex flex-row justify-content-between align-items-start bg-light w-100 p-4">
           <h4 className="fw-bold my-2">{props.info.billFrom}</h4>
           <h6 className="fw-bold text-secondary mb-1">
-            Invoice #: {props.info.InvoiceNumber}
+            Invoice #: {props.info.invoiceNumber}
           </h6>
         </div>
         <div className="text-end ms-4">

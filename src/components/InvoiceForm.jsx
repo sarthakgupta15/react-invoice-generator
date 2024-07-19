@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Col, Form, Row, Button, InputGroup } from "react-bootstrap";
 import InvoiceItem from "./reusable/InvoiceItem";
 import InvoiceModal from "./reusable/InvoiceModal";
@@ -91,6 +91,39 @@ function InvoiceForm() {
   const onCurrencyChange = (selectedOption) => {
     setState((state) => ({ ...state, selectedOption }));
   };
+
+  const handleCalculateTotal = (items) => {
+    var subTotal = 0;
+    items.map((item) => {
+      subTotal += parseFloat(item.price).toFixed(2) * parseInt(item.quantity);
+    })[0];
+
+    subTotal = parseFloat(subTotal).toFixed(2);
+
+    const discountAmount = parseFloat(
+      parseFloat(subTotal) * parseFloat(state.discountRate / 100)
+    ).toFixed(2);
+
+    const taxAmount = parseFloat(
+      parseFloat(subTotal) * parseFloat(state.taxRate / 100)
+    ).toFixed(2);
+
+    const total =
+      parseFloat(subTotal) + parseFloat(taxAmount) - parseFloat(discountAmount);
+
+    setTotal(total);
+
+    setState((state) => ({
+      ...state,
+      subTotal,
+      taxAmount,
+      discountAmount,
+    }));
+  };
+
+  useEffect(() => {
+    handleCalculateTotal(items);
+  }, [items, state.taxRate, state.discountRate]);
 
   return (
     <Form
@@ -198,6 +231,41 @@ function InvoiceForm() {
               onRowDel={handleRowDel}
               currency={state.currency}
             />
+            <Row className="mt-4 justify-content-end">
+              <Col lg={6}>
+                <div className="d-flex flex-row align-items-start justify-content-between">
+                  <span className="fw-bold">Subtotal:</span>
+                  <span>
+                    {state.currency} {state.subTotal}
+                  </span>
+                </div>
+
+                <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                  <span className="fw-bold">Discount:</span>
+                  <span>
+                    {state.discountRate}% {state.currency}{" "}
+                    {state.discountAmount}
+                  </span>
+                </div>
+
+                <div className="d-flex flex-row align-items-start justify-content-between mt-2">
+                  <span className="fw-bold">Tax:</span>
+                  <span>
+                    {state.taxRate}% {state.currency} {state.taxAmount}
+                  </span>
+                </div>
+
+                <div
+                  className="d-flex flex-row align-items-start justify-content-between mt-2"
+                  style={{ fontSize: "1.125rem" }}
+                >
+                  <span className="fw-bold">Total:</span>
+                  <span>
+                    {state.currency} {total}
+                  </span>
+                </div>
+              </Col>
+            </Row>
           </Card>
         </Col>
         <Col md={4} lg={3}>
