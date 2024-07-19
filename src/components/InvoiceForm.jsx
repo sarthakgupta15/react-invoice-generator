@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Col, Form, Row } from "react-bootstrap";
+import { Card, Col, Form, Row, Button } from "react-bootstrap";
 import InvoiceItem from "./reusable/InvoiceItem";
 
 function InvoiceForm() {
@@ -42,26 +42,22 @@ function InvoiceForm() {
   };
 
   const onItemizedItemEdit = (event) => {
-    const individualItem = {
-      id: event.target.id,
-      name: event.target.name,
-      value: event.target.value,
-    };
-
-    var newItems = items.map((item) => {
-      for (var key in item) {
-        if (key === individualItem.name && item.id === individualItem.id) {
-          item[key] = individualItem.value;
-        }
+    const { id, name, value } = event.target;
+  
+    const newItems = items.map((item) => {
+      if (item.id === id) {
+        return { ...item, [name]: value };
       }
       return item;
     });
+  
     setItems(newItems);
   };
+  
 
-  const handleAddEvent = (e) => {
-    var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
-    var item = {
+  const handleAddEvent = () => {
+    const id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+    const item = {
       id,
       name: "",
       price: 1.0,
@@ -85,6 +81,10 @@ function InvoiceForm() {
         },
       ]);
     }
+  };
+
+  const onCurrencyChange = (event) => {
+    setState((state) => ({ ...state, currency: event.target.value }));
   };
 
   return (
@@ -173,6 +173,23 @@ function InvoiceForm() {
               currency={state.currency}
             />
           </Card>
+        </Col>
+        <Col md={4} lg={3}>
+          <div className="sticky-top pt-md-3 pt-xl-4">
+            <Button variant="primary" type="submit" className="d-block w-100">
+              Review Invoice
+            </Button>
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">Currency:</Form.Label>
+              <Form.Select
+                onChange={onCurrencyChange}
+                className="btn btn-ligt my-1"
+              >
+                <option value="₹">INR</option>
+                <option value="$">USD</option>
+              </Form.Select>
+            </Form.Group>
+          </div>
         </Col>
       </Row>
     </Form>
