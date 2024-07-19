@@ -15,7 +15,7 @@ function InvoiceForm() {
     billFrom: "",
     billFromEmail: "",
     billFromAddress: "",
-    notes: "",
+    notes: "Thank you for Shopping. Have a great day!",
     subTotal: "0.00",
     taxRate: 0,
     taxAmount: "0.00",
@@ -274,7 +274,6 @@ function InvoiceForm() {
               variant="primary"
               type="submit"
               className="d-block w-100 mb-3"
-              onClick={() => setState((state) => ({ ...state, isOpen: true }))}
             >
               Review Invoice
             </Button>
