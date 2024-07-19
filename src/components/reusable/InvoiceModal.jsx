@@ -1,10 +1,29 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import React from "react";
-import { Table, Row, Col, Modal } from "react-bootstrap";
+import { Table, Row, Col, Modal, Button } from "react-bootstrap";
 
 function InvoiceModal(props) {
+  const generateInvoice = () => {
+    html2canvas(document.querySelector("#invoiceCapture")).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png", 1.0);
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: [612, 792],
+      });
+      pdf.internal.scaleFactor = 1;
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("invoice.pdf");
+    });
+  };
+
   return (
     <Modal show={props.showModal} onHide={props.closeModal} size="lg" centered>
-      <div id="invoicecapture">
+      <div id="invoiceCapture">
         <div className="d-flex flex-row justify-content-between align-items-start bg-light w-100 p-4">
           <h4 className="fw-bold my-2">{props.info.billFrom}</h4>
           <h6 className="fw-bold text-secondary mb-1">
@@ -120,6 +139,15 @@ function InvoiceModal(props) {
             <div className="bg-light py-3 px-4 rounded">{props.info.notes}</div>
           )}
         </div>
+      </div>
+      <div className="pb-4 px-4">
+        <Button
+          variant="primary"
+          className="d-block w-100 mt-3 mt-md-0"
+          onClick={generateInvoice}
+        >
+          Download
+        </Button>
       </div>
     </Modal>
   );
