@@ -11,9 +11,9 @@ function InvoiceForm() {
     billTo: "",
     billToAddress: "",
     billToEmail: "",
-    billFrom: "Sarthak",
-    billFromEmail: "sarthak@gmail.com",
-    billFromAddress: "Delhi",
+    billFrom: "",
+    billFromEmail: "",
+    billFromAddress: "",
     notes: "",
     subTotal: "0.00",
     taxRate: 0,
@@ -42,22 +42,26 @@ function InvoiceForm() {
   };
 
   const onItemizedItemEdit = (event) => {
-    const { id, name, value } = event.target;
-  
-    const newItems = items.map((item) => {
-      if (item.id === id) {
-        return { ...item, [name]: value };
+    const individualItem = {
+      id: event.target.id,
+      name: event.target.name,
+      value: event.target.value,
+    };
+
+    var newItems = items.map((item) => {
+      for (var key in item) {
+        if (key === individualItem.name && item.id === individualItem.id) {
+          item[key] = individualItem.value;
+        }
       }
       return item;
     });
-  
     setItems(newItems);
   };
-  
 
-  const handleAddEvent = () => {
-    const id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
-    const item = {
+  const handleAddEvent = (e) => {
+    var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+    var item = {
       id,
       name: "",
       price: 1.0,
@@ -83,8 +87,8 @@ function InvoiceForm() {
     }
   };
 
-  const onCurrencyChange = (event) => {
-    setState((state) => ({ ...state, currency: event.target.value }));
+  const onCurrencyChange = (selectedOption) => {
+    setState((state) => ({ ...state, selectedOption }));
   };
 
   return (
@@ -92,10 +96,10 @@ function InvoiceForm() {
       <Row>
         <Col md={8} lg={9}>
           <Card className="d-flex p-4 p-xl-5 my-3 my-xl-4">
-            <div className="d-dlex flex-row justify-content-between">
+            <div className="d-flex flex-row justify-content-between">
               <div className="d-flex flex-row mb-3">
                 <div className="mb-2">
-                  <span className="fw-bold">Current&nbsp; Date:&nbsp; </span>
+                  <span className="fw-bold">Current Date: </span>
                   <span className="current-date">
                     {new Date().toLocaleDateString()}
                   </span>
@@ -103,7 +107,7 @@ function InvoiceForm() {
               </div>
               <div className="d-flex flex-row mb-3">
                 <div className="mb-2">
-                  <span className="fw-bold">Invoice&nbsp; Number:&nbsp; </span>
+                  <span className="fw-bold">Invoice Number: </span>
                   <span className="current-date">{state.invoiceNumber}</span>
                 </div>
               </div>
@@ -146,22 +150,38 @@ function InvoiceForm() {
               </Col>
 
               <Col>
-                <Form.Label className="fw-bold">BillFrom:</Form.Label>
+                <Form.Label className="fw-bold">Bill From:</Form.Label>
                 <Form.Control
+                  placeholder="Enter Name"
                   value={state.billFrom}
+                  type="text"
+                  name="billFrom"
                   className="my-2"
-                  disabled={true}
+                  onChange={onChange}
+                  autoComplete="name"
+                  required={true}
                 />
 
                 <Form.Control
+                  placeholder="Enter Email"
                   value={state.billFromEmail}
+                  type="email"
+                  name="billFromEmail"
                   className="my-2"
-                  disabled={true}
+                  onChange={onChange}
+                  autoComplete="email"
+                  required={true}
                 />
+
                 <Form.Control
+                  placeholder="Enter Address"
                   value={state.billFromAddress}
+                  type="text"
+                  name="billFromAddress"
                   className="my-2"
-                  disabled={true}
+                  onChange={onChange}
+                  autoComplete="address"
+                  required={true}
                 />
               </Col>
             </Row>
@@ -182,8 +202,8 @@ function InvoiceForm() {
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">Currency:</Form.Label>
               <Form.Select
-                onChange={onCurrencyChange}
-                className="btn btn-ligt my-1"
+                onChange={(e) => onCurrencyChange({ currency: e.target.value })}
+                className="btn btn-light my-1"
               >
                 <option value="₹">INR</option>
                 <option value="$">USD</option>
